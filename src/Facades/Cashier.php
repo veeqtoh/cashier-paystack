@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Veeqtoh\CashierPaystack\Facades;
+namespace Veeqtoh\Cashier\Facades;
 
 use Illuminate\Support\Facades\Facade;
 use RuntimeException;
 
 /**
- * class CashierPaystack
+ * class Cashier
  * This class provides the facade for this library.
  *
- * @package Veeqtoh\CashierPaystack\Facades
+ * @package Veeqtoh\Cashier\Facades
  */
-class CashierPaystack extends Facade
+class Cashier extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -22,6 +22,6 @@ class CashierPaystack extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return 'cashier-paystack';
+        return 'cashier';
     }
 }

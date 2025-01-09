@@ -51,17 +51,17 @@
     },
     "autoload": {
         "psr-4": {
-            "Veeqtoh\\CashierPaystack\\": "src/",
-            "Veeqtoh\\CashierPaystack\\Database\\Factories\\": "database/factories/"
+            "Veeqtoh\\Cashier\\": "src/",
+            "Veeqtoh\\Cashier\\Database\\Factories\\": "database/factories/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Veeqtoh\\CashierPaystack\\Providers\\CashierPaystackProvider"
+                "Veeqtoh\\Cashier\\Providers\\CashierServiceProvider"
             ],
             "aliases": {
-                "CashierPaystack": "Veeqtoh\\CashierPaystack\\Facades\\CashierPaystack"
+                "Cashier": "Veeqtoh\\Cashier\\Facades\\Cashier"
             }
         }
     },

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Veeqtoh\CashierPaystack\Providers;
+namespace Veeqtoh\Cashier\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
 /**
- * class CashierPaystackProvider
+ * class CashierServiceProvider
  * This class registers the package within Laravel.
  *
- * @package Veeqtoh\CashierPaystack\Providers
+ * @package Veeqtoh\Cashier\Providers
  */
-class CashierPaystackProvider extends ServiceProvider
+class CashierServiceProvider extends ServiceProvider
 {
     /**
      * Register the application services.
