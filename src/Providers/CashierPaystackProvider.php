@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Veeqtoh\CashierPaystack\Providers;
@@ -35,8 +36,20 @@ class CashierPaystackProvider extends ServiceProvider
         ], 'config');
 
         // Publish the package's migrations.
-        $this->publishes([
-            __DIR__.'/../../database/migrations' => database_path('migrations'),
+        // $this->publishes([
+        //     __DIR__.'/../../database/migrations' => database_path('migrations'),
+        // ], 'cashier-paystack-migrations');
+
+        $publishesMigrationsMethod = method_exists($this, 'publishesMigrations')
+        ? 'publishesMigrations'
+        : 'publishes';
+
+        $this->{$publishesMigrationsMethod}([
+            __DIR__.'/../../database/migrations' => $this->app->databasePath('migrations'),
         ], 'cashier-paystack-migrations');
+
+        $this->publishes([
+            __DIR__.'/../../resources/views' => $this->app->resourcePath('views/vendor/paystack-cashier'),
+        ], 'paystack-cashier-views');
     }
 }
