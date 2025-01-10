@@ -52,7 +52,9 @@
     "autoload": {
         "psr-4": {
             "Veeqtoh\\Cashier\\": "src/",
-            "Veeqtoh\\Cashier\\Database\\Factories\\": "database/factories/"
+            "Veeqtoh\\Cashier\\Database\\Factories\\": "database/factories/",
+            "Veeqtoh\\Cashier\\Tests\\": "tests/"
+
         }
     },
     "extra": {
