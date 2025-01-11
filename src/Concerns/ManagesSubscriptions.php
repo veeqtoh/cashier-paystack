@@ -6,8 +6,11 @@ namespace Veeqtoh\Cashier\Concerns;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Unicodeveloper\Paystack\Facades\Paystack;
 use Veeqtoh\Cashier\Classes\SubscriptionBuilder;
+use Veeqtoh\Cashier\Exceptions\FailedToCreatePaystackCustomer;
 use Veeqtoh\Cashier\Models\Subscription;
+use Veeqtoh\Cashier\Services\PaystackService;
 
 trait ManagesSubscriptions
 {
@@ -79,5 +82,66 @@ trait ManagesSubscriptions
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Determine if the model is actively subscribed to one of the given plans.
+     */
+    public function subscribedToPlan(array|string $plans, string $subscription = 'default'): bool
+    {
+        $subscription = $this->subscription($subscription);
+
+        if (! $subscription || ! $subscription->valid()) {
+            return false;
+        }
+
+        foreach ((array) $plans as $plan) {
+            if ($subscription->paystack_plan === $plan) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if the entity is on the given plan.
+     */
+    public function onPlan(string $plan): bool
+    {
+        return ! is_null($this->subscriptions->first(function ($subscription) use ($plan) {
+            return $subscription->paystack_plan === $plan;
+        }));
+    }
+
+    /**
+     * Create a Paystack customer for the given model.
+     */
+    public function createAsPaystackCustomer(array $options = []): mixed
+    {
+        $options  = array_key_exists('email', $options) ? $options : array_merge($options, ['email' => $this->email]);
+        $response = PaystackService::createCustomer($options);
+
+        if (! $response['status']) {
+            throw new FailedToCreatePaystackCustomer($response);
+        }
+
+        $this->paystack_id   = $response['data']['id'];
+        $this->paystack_code = $response['data']['customer_code'];
+
+        $this->save();
+
+        return $response['data'];
+    }
+
+    /**
+     * Get the Paystack customer for the model.
+     *
+     * @return $customer
+     */
+    public function asPaystackCustomer()
+    {
+        $customer = Paystack::fetchCustomer($this->paystack_id)['data'];
+        return $customer;
     }
 }

@@ -143,4 +143,12 @@ trait ManagesInvoices
 
         return $this->invoices($parameters);
     }
+
+    /**
+     * Determine if the entity has a Paystack customer ID.
+     */
+    public function hasPaystackId(): bool
+    {
+        return ! is_null($this->paystack_id);
+    }
 }
