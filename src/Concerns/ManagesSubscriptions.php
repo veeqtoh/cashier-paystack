@@ -17,7 +17,7 @@ trait ManagesSubscriptions
     /**
      * Begin creating a new subscription.
      */
-    public function newSubscription(string $subscription = 'default', string $plan): SubscriptionBuilder
+    public function newSubscription(string $plan, string $subscription = 'default'): SubscriptionBuilder
     {
         return new SubscriptionBuilder($this, $subscription, $plan);
     }

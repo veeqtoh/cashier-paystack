@@ -126,7 +126,7 @@ class SubscriptionBuilder
      /**
      * Get the subscription payload data for Paystack.
      */
-    protected function getSubscriptionPayload(array $customer): array
+    protected function getSubscriptionPayload(array $customer, array $options = []): array
     {
         if ($this->skipTrial) {
             $startDate = Carbon::now();
