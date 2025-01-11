@@ -6,8 +6,8 @@ namespace Veeqtoh\Cashier\Concerns;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Veeqtoh\Cashier\Classes\SubscriptionBuilder;
 use Veeqtoh\Cashier\Models\Subscription;
-use Veeqtoh\Cashier\SubscriptionBuilder;
 
 trait ManagesSubscriptions
 {

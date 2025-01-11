@@ -10,9 +10,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
+use Veeqtoh\Cashier\Classes\Invoice;
 use Veeqtoh\Cashier\Exceptions\InvoiceNotFound;
 use Veeqtoh\Cashier\Exceptions\NotPaystackCustomer;
-use Veeqtoh\Cashier\Invoice;
 use Veeqtoh\Cashier\Services\PaystackService;
 
 trait ManagesInvoices

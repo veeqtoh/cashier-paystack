@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Veeqtoh\Cashier;
+namespace Veeqtoh\Cashier\Classes;
 
 use Carbon\Carbon;
 use Veeqtoh\Cashier\Exceptions\FailedToCreateSubscription;

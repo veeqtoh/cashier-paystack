@@ -1,246 +1,230 @@
 <?php
-namespace Veeqtoh\Cashier;
+
+declare(strict_types=1);
+
+namespace Veeqtoh\Cashier\Classes;
 
 use Carbon\Carbon;
+use DateTimeZone;
 use Dompdf\Dompdf;
 use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
+use Veeqtoh\Cashier\Cashier;
+use Veeqtoh\Cashier\Services\PaystackService;
 
 class Invoice
 {
     /**
-     * The model instance.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $owner;
-    /**
-     * The Paystack invoice instance.
-     *
-     * @var PaystackInvoice
-     */
-    protected $invoice;
-    /**
      * Create a new invoice instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $owner
-     * @param   $invoice
+     * @param  Model $owner   The model instance.
+     * @param  mixed $invoice The Paystack invoice instance.
+     *
      * @return void
      */
-    public function __construct($owner, $invoice)
+    public function __construct(protected Model $owner, protected mixed $invoice)
     {
-        $this->owner = $owner;
-        $this->invoice = $invoice;
+        //
     }
+
     /**
      * Get a Carbon date for the invoice.
-     *
-     * @param  \DateTimeZone|string  $timezone
-     * @return \Carbon\Carbon
      */
-    public function date($timezone = null): Carbon
+    public function date(DateTimeZone|string $timezone = null): Carbon
     {
         $carbon = Carbon::instance($this->invoice['created_at']);
+
         return $timezone ? $carbon->setTimezone($timezone) : $carbon;
     }
+
     /**
      * Get the total amount that was paid (or will be paid).
-     *
-     * @return string
      */
-    public function total()
+    public function total(): mixed
     {
         return $this->formatAmount($this->rawTotal());
     }
+
     /**
      * Get the raw total amount that was paid (or will be paid).
-     *
-     * @return float
      */
-    public function rawTotal()
+    public function rawTotal(): mixed
     {
         return max(0, $this->invoice['amount']);
     }
+
     /**
      * Get the total of the invoice (before discounts).
-     *
-     * @return string
      */
-    public function subtotal()
+    public function subtotal(): string
     {
         if ($this->hasStartingBalance()) {
             return $this->startingBalance();
         }
+
         return $this->formatAmount(
             max(0, $this->invoice['amount'] - ($this->invoice['discount']['amount'] ?? 0))
-        );    
+        );
     }
+
     /**
      * Determine if the account had a starting balance.
-     *
-     * @return bool
      */
-    public function hasStartingBalance()
+    public function hasStartingBalance(): bool
     {
         return $this->rawStartingBalance() > 0;
     }
+
     /**
      * Get the starting balance for the invoice.
-     *
-     * @return string
      */
-    public function startingBalance()
+    public function startingBalance(): mixed
     {
         return $this->formatAmount($this->rawStartingBalance());
     }
+
     /**
      * Determine if the invoice has a discount.
-     *
-     * @return bool
      */
-    public function hasDiscount()
+    public function hasDiscount(): bool
     {
         return isset($this->invoice['discount']);
     }
+
     /**
      * Get the discount amount.
-     *
-     * @return string
      */
-    public function discount()
+    public function discount(): mixed
     {
         return $this->formatAmount($this->invoice['discount']['amount']);
     }
+
     /**
      * Determine if the discount is a percentage.
-     *
-     * @return bool
      */
-    public function discountIsPercentage()
+    public function discountIsPercentage(): bool
     {
         return $this->hasDiscount() && $this->invoice['discount']['type'] == 'percentage' ;
     }
+
     /**
      * Get the discount percentage for the invoice.
-     *
-     * @return int
      */
-    public function percentOff()
+    public function percentOff(): mixed
     {
         if ($this->discountIsPercentage()) {
             return $this->invoice['discount']['amount'];
         }
+
         return 0;
     }
+
     /**
      * Get the discount amount for the invoice.
-     *
-     * @return string
      */
-    public function amountOff()
+    public function amountOff(): mixed
     {
         if (isset($this->invoice['discount']['amount_off'])) {
             return $this->formatAmount($this->invoice['discount']['amount_off']);
         }
+
         return $this->formatAmount(0);
     }
+
     /**
      * Get the raw invoice balance amount.
-     *
-     * @return float
      */
-    public function rawStartingBalance()
+    public function rawStartingBalance(): mixed
     {
         $totalItemAmount = 0;
         foreach ($this->invoice['line_items'] as $item) {
             $totalItemAmount += $item['amount'];
         }
+
         return $totalItemAmount;
     }
+
     /**
      * Get the items applied to the invoice.
-     *
-     * @return array
      */
-    public function invoiceItems()
+    public function invoiceItems(): array
     {
         $items = [];
+
         foreach ($this->invoice['line_items'] as $item) {
             $items[] = $item;
         }
+
         return $items;
     }
+
     /**
      * Format the given amount into a string based on the user's preferences.
-     *
-     * @param  int  $amount
-     * @return string
      */
-    protected function formatAmount($amount)
+    protected function formatAmount(int $amount): mixed
     {
         return Cashier::formatAmount($amount);
     }
+
     /**
      * Update instance for the invoice.
-     *
-     * @param  array  $data
      */
-    public function update(array $data)
+    public function update(array $data): mixed
     {
         $data['customer'] = $this->owner->paystack_id;
- 
+
         return PaystackService::updateInvoice($this->invoice['id'], $data);
 
     }
+
     /**
-     * Statud for this invoice instance.
-     *
+     * Get the status for this invoice instance.
      */
-    public function status()
+    public function status(): mixed
     {
         return $this->invoice['status'];
     }
+
     /**
      * Verify this invoice instance.
-     *
      */
-    public function verify()
+    public function verify(): mixed
     {
         return PaystackService::verifyInvoice($this->invoice['request_code']);
     }
+
     /**
      * Notify the customer for this invoice instance.
-     *
      */
-    public function notify()
+    public function notify(): mixed
     {
         return PaystackService::notifyInvoice($this->invoice['id']);
     }
+
     /**
      * Finalize this draft invoice instance.
-     *
      */
-    public function finalize()
+    public function finalize(): mixed
     {
         if ($this->status() === 'draft') {
             return PaystackService::finalizeInvoice($this->invoice['id']);
         }
+
         return $this->notify();
     }
+
     /**
      * Archive this invoice instance.
-     *
      */
-    public function archive()
+    public function archive(): mixed
     {
         return PaystackService::archiveInvoice($this->invoice['id']);
     }
+
     /**
      * Get the View instance for the invoice.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\View\View
      */
     public function view(array $data): ViewContract
     {
@@ -248,61 +232,54 @@ class Invoice
             $data, ['invoice' => $this, 'owner' => $this->owner, 'user' => $this->owner]
         ));
     }
+
     /**
      * Capture the invoice as a PDF and return the raw bytes.
-     *
-     * @param  array  $data
-     * @return string
-     * @throws \Throwable
      */
-    public function pdf(array $data)
+    public function pdf(array $data): ?string
     {
         if (! defined('DOMPDF_ENABLE_AUTOLOAD')) {
             define('DOMPDF_ENABLE_AUTOLOAD', false);
         }
+
         if (file_exists($configPath = base_path().'/vendor/dompdf/dompdf/dompdf_config.inc.php')) {
             require_once $configPath;
         }
+
         $dompdf = new Dompdf;
         $dompdf->loadHtml($this->view($data)->render());
         $dompdf->render();
+
         return $dompdf->output();
     }
+
     /**
      * Create an invoice download response.
-     *
-     * @param  array  $data
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Throwable
      */
     public function download(array $data): Response
     {
         $filename = $data['product'].'_'.$this->date()->month.'_'.$this->date()->year.'.pdf';
+
         return new Response($this->pdf($data), 200, [
-            'Content-Description' => 'File Transfer',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+            'Content-Type'              => 'application/pdf',
+            'Content-Description'       => 'File Transfer',
+            'Content-Disposition'       => 'attachment; filename="'.$filename.'"',
             'Content-Transfer-Encoding' => 'binary',
-            'Content-Type' => 'application/pdf',
         ]);
     }
 
     /**
      * Get the Paystack invoice instance.
-     *
-     * @return array
      */
-    public function asPaystackInvoice()
+    public function asPaystackInvoice(): mixed
     {
         return $this->invoice;
     }
 
     /**
      * Dynamically get values from the Paystack invoice.
-     *
-     * @param  string  $key
-     * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         return $this->invoice[$key];
     }
