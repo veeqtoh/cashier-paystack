@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('paystack_id')->nullable()->index();
             $table->string('paystack_code')->nullable();
-            $table->string('pm_type')->nullable();
-            $table->string('pm_last_four', 4)->nullable();
+            $table->string('card_brand')->nullable();
+            $table->string('card_last_four', 4)->nullable();
             $table->timestamp('trial_ends_at')->nullable();
         });
     }
@@ -35,8 +35,8 @@ return new class extends Migration
             $table->dropColumn([
                 'paystack_id',
                 'paystack_code',
-                'pm_type',
-                'pm_last_four',
+                'card_brand',
+                'card_last_four',
                 'trial_ends_at',
             ]);
         });
