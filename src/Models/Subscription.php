@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Veeqtoh\Cashier\Cashier;
 use Veeqtoh\Cashier\Exceptions\SubscriptionNotFound;
 use Veeqtoh\Cashier\Services\PaystackService;
@@ -47,9 +48,17 @@ class Subscription extends Model
      */
     public function owner(): BelongsTo
     {
-        $class = Cashier::paystackModel();
+        $model = Cashier::paystackModel();
 
-        return $this->belongsTo($class, (new $class)->getForeignKey());
+        return $this->belongsTo($model, (new $model)->getForeignKey());
+    }
+
+    /**
+     * Get the subscription items related to the subscription.
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(Cashier::$subscriptionItemModel);
     }
 
     /**
