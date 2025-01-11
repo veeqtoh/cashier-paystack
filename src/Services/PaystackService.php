@@ -220,7 +220,7 @@ class PaystackService {
     }
 
     /**
-     * Find an invoice.
+     * Find an invoice by ID.
      */
     public static function findInvoice(string $invoice_id): mixed
     {

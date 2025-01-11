@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Veeqtoh\Cashier;
 
 use Veeqtoh\Cashier\Cashier;
+use Veeqtoh\Cashier\Concerns\ManagesInvoices;
+use Veeqtoh\Cashier\Concerns\ManagesSubscriptions;
 use Veeqtoh\Cashier\Concerns\PerformsCharges;
 
 trait Billable
 {
     use PerformsCharges;
+    use ManagesInvoices;
+    use ManagesSubscriptions;
 
     /**
      * Get the Paystack supported currency used by the entity.
