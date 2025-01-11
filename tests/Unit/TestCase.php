@@ -5,6 +5,8 @@ namespace Veeqtoh\Cashier\Tests\Unit;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Unicodeveloper\Paystack\Facades\Paystack;
+use Unicodeveloper\Paystack\PaystackServiceProvider;
 use Veeqtoh\Cashier\Facades\Cashier;
 use Veeqtoh\Cashier\Providers\CashierServiceProvider;
 
@@ -22,7 +24,10 @@ abstract class TestCase extends OrchestraTestCase
      */
     protected function getPackageProviders($app)
     {
-        return [CashierServiceProvider::class];
+        return [
+            CashierServiceProvider::class,
+            PaystackServiceProvider::class,
+        ];
     }
 
     /**
@@ -35,7 +40,23 @@ abstract class TestCase extends OrchestraTestCase
     protected function getPackageAliases($app)
     {
         return [
-            'Cashier' => Cashier::class,
+            'Cashier'  => Cashier::class,
+            'Paystack' => Paystack::class,
         ];
+    }
+
+    /**
+     * Define environment setup.
+     *
+     * @param \Illuminate\Foundation\Application $app
+     *
+     * @return void
+     */
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('paystack.publicKey', 'your_public_key');
+        $app['config']->set('paystack.secretKey', 'your_secret_key');
+        $app['config']->set('paystack.paymentUrl', 'https://api.paystack.co');
+        $app['config']->set('paystack.merchantEmail', 'merchant@example.com');
     }
 }
