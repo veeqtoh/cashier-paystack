@@ -142,6 +142,7 @@ trait ManagesSubscriptions
     public function asPaystackCustomer()
     {
         $customer = Paystack::fetchCustomer($this->paystack_id)['data'];
+
         return $customer;
     }
 }

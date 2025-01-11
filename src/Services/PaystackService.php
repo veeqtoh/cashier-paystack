@@ -45,7 +45,7 @@ class PaystackService {
      */
     public function setBaseUrl(): void
     {
-        $this->baseUrl = Config::get('paystack-cashier.paymentUrl');
+        $this->baseUrl = Config::get('paystack.paymentUrl');
     }
 
     /**
@@ -53,7 +53,7 @@ class PaystackService {
      */
     public function setKey(): void
     {
-        $this->secretKey = Config::get('paystack-cashier.secretKey');
+        $this->secretKey = Config::get('paystack.secretKey');
     }
 
     /**

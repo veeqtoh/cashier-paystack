@@ -54,9 +54,9 @@ abstract class TestCase extends OrchestraTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-        $app['config']->set('paystack-cashier.publicKey', 'your_public_key');
-        $app['config']->set('paystack-cashier.secretKey', 'your_secret_key');
-        $app['config']->set('paystack-cashier.paymentUrl', 'https://api.paystack.co');
-        $app['config']->set('paystack-cashier.merchantEmail', 'merchant@example.com');
+        $app['config']->set('paystack.publicKey', 'your_public_key');
+        $app['config']->set('paystack.secretKey', 'your_secret_key');
+        $app['config']->set('paystack.paymentUrl', 'https://api.paystack.co');
+        $app['config']->set('paystack.merchantEmail', 'merchant@example.com');
     }
 }

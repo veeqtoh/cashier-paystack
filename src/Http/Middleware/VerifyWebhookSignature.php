@@ -44,7 +44,7 @@ final class VerifyWebhookSignature
         // Validate the event to prevent timing attacks.
         $signature = $request->header('HTTP_X_PAYSTACK_SIGNATURE');
         $payload   = $request->getContent();
-        $secretKey = config('paystack-cashier.secretKey');
+        $secretKey = config('paystack.secretKey');
 
         if ($signature !== $this->generateSignature($payload, $secretKey)) {
             return response()->json(['error' => 'Forbidden'], 403);
