@@ -35,11 +35,6 @@ class CashierServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/paystack.php' => config_path('paystack.php'),
         ], 'config');
 
-        // Publish the package's migrations.
-        // $this->publishes([
-        //     __DIR__.'/../../database/migrations' => database_path('migrations'),
-        // ], 'cashier-paystack-migrations');
-
         $publishesMigrationsMethod = method_exists($this, 'publishesMigrations')
         ? 'publishesMigrations'
         : 'publishes';
