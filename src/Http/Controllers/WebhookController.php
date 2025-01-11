@@ -20,7 +20,7 @@ class WebhookController extends Controller
      */
     public function __construct()
     {
-        if (config('paystack.secretKey')) {
+        if (config('paystack-cashier.secretKey')) {
             $this->middleware(VerifyWebhookSignature::class);
         }
     }

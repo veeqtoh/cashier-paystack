@@ -66,7 +66,7 @@ class Cashier
      */
     public static function paystackModel(): mixed
     {
-        return getenv('PAYSTACK_MODEL') ?: config('paystack.model', 'App\\Models\\User');
+        return getenv('PAYSTACK_MODEL') ?: config('paystack-cashier.model', 'App\\Models\\User');
     }
 
     /**

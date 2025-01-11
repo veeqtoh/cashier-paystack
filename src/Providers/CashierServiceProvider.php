@@ -20,7 +20,7 @@ class CashierServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Merge the package's configuration with the Laravel application's configuration.
-        $this->mergeConfigFrom(__DIR__ . '/../../config/paystack.php', 'paystack');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/paystack-cashier.php', 'paystack-cashier');
     }
 
     /**
@@ -32,7 +32,7 @@ class CashierServiceProvider extends ServiceProvider
     {
         // Publish the package's configuration file to the Laravel application.
         $this->publishes([
-            __DIR__ . '/../../config/paystack.php' => config_path('paystack.php'),
+            __DIR__ . '/../../config/paystack-cashier.php' => config_path('paystack-cashier.php'),
         ], 'config');
 
         // Publish the package's migrations.
