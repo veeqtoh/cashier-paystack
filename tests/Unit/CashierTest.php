@@ -1,7 +1,7 @@
 <?php
 
 use Veeqtoh\Cashier\Cashier;
-use Veeqtoh\Cashier\Exceptions\CurrencySymbolNotFoundException;
+use Veeqtoh\Cashier\Exceptions\CurrencySymbolNotFound;
 
 beforeEach(function () {
     // Reset to default currency before each test.
@@ -30,7 +30,7 @@ test('it guesses correct currency symbols', function () {
 
 test('it throws an exception for unknown currency', function () {
     Cashier::useCurrency('xyz');
-})->throws(CurrencySymbolNotFoundException::class);
+})->throws(CurrencySymbolNotFound::class);
 
 test('it formats amounts correctly with default formatter', function () {
     expect(Cashier::formatAmount(12345))->toBe('₦123.45');

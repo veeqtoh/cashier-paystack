@@ -6,7 +6,7 @@ namespace Veeqtoh\Cashier\Exceptions;
 
 use Exception;
 
-class CurrencySymbolNotFoundException extends Exception
+class CurrencySymbolNotFound extends Exception
 {
     public function __construct($currency)
     {

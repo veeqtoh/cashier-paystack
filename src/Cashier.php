@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Veeqtoh\Cashier;
 
-use Veeqtoh\Cashier\Exceptions\CurrencySymbolNotFoundException;
+use Veeqtoh\Cashier\Exceptions\CurrencySymbolNotFound;
 use Veeqtoh\Cashier\Models\Subscription;
 use Veeqtoh\Cashier\Models\SubscriptionItem;
 
@@ -83,7 +83,7 @@ class Cashier
     /**
      * Guess the currency symbol for the given currency.
      *
-     * @throws CurrencySymbolNotFoundException
+     * @throws CurrencySymbolNotFound
      */
     protected static function guessCurrencySymbol(string $currency): string
     {
@@ -105,7 +105,7 @@ class Cashier
             return $currencySymbols[$currency];
         }
 
-        throw new CurrencySymbolNotFoundException($currency);
+        throw new CurrencySymbolNotFound($currency);
     }
 
     /**
