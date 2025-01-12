@@ -6,29 +6,34 @@ namespace Veeqtoh\Cashier\Services;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Config;
+use RuntimeException;
 use Veeqtoh\Cashier\Exceptions\IsNull;
 
 class PaystackService {
     /**
      * Issue Secret Key from your Paystack Dashboard.
+     *
      * @var string
      */
     protected $secretKey;
 
     /**
      * Instance of Client.
+     *
      * @var Client
      */
     protected $client;
 
     /**
      * Response from requests made to Paystack.
+     *
      * @var mixed
      */
     protected $response;
 
     /**
-     * Paystack API base Url
+     * Paystack API base Url.
+     *
      * @var string
      */
     protected $baseUrl;
@@ -98,11 +103,19 @@ class PaystackService {
     }
 
     /**
-     * Get the whole response from a get operation
+     * Get the whole response from a get operation.
      */
     private function getResponse(): mixed
     {
-        return json_decode($this->response->getBody(), true);
+        // Convert the Stream to a string before decoding.
+        $body    = (string) $this->response->getBody();
+        $decoded = json_decode($body, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new RuntimeException('Invalid JSON response: ' . json_last_error_msg());
+        }
+
+        return $decoded;
     }
 
     /**
