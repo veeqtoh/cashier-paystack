@@ -136,12 +136,10 @@ trait ManagesSubscriptions
 
     /**
      * Get the Paystack customer for the model.
-     *
-     * @return $customer
      */
-    public function asPaystackCustomer()
+    public function asPaystackCustomer(): mixed
     {
-        $customer = Paystack::fetchCustomer($this->paystack_id)['data'];
+        $customer = Paystack::fetchCustomer($this->paystack_code)['data'];
 
         return $customer;
     }
