@@ -177,6 +177,14 @@ class Subscription extends Model
     }
 
     /**
+     * Mark the subscription as suspended.
+     */
+    public function markAsSuspended(Carbon $endsAt): void
+    {
+        $this->fill(['ends_at' => $endsAt])->save();
+    }
+
+    /**
      * Resume the cancelled subscription.
      */
     public function resume(): static

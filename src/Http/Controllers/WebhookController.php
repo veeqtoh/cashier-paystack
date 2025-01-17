@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Veeqtoh\Cashier\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
@@ -129,6 +130,38 @@ class WebhookController extends Controller
 
         Log::info('Customer data updated');
         return new Response('Charge success handled', 200);
+    }
+
+    /**
+     * Handle when a subscription on your account's status has changed to non-renewing.
+     * This means the subscription will not be charged on the next payment date.
+     */
+    protected function handleSubscriptionNotRenew(array $payload): Response
+    {
+        if (!isset($payload['data'])) {
+            Log::error('Invalid subscription not renew payload: Missing data key', ['payload' => $payload]);
+            return new Response('Invalid subscription not renew data', 400);
+        }
+
+        $data             = $payload['data'];
+        $subscriptionCode = $data['subscription_code'];
+
+        if (!$subscriptionCode) {
+            Log::error('Missing subscription code in subscription not renew payload');
+            return new Response('Invalid subscription code', 400);
+        }
+
+        $subscription = $this->getSubscriptionByCode($subscriptionCode);
+
+        if ($subscription && (! $subscription->cancelled() || $subscription->onGracePeriod())) {
+            $subscription->markAsSuspended(Carbon::parse($data['next_payment_date']));
+
+            Log::info('Subscription will not renew', ['subscription_code' => $subscriptionCode]);
+            return new Response('Subscription will not renew', 200);
+        }
+
+        Log::warning('Subscription not found or already cancelled', ['subscription_code' => $subscriptionCode]);
+        return new Response('Subscription not found or already cancelled', 404);
     }
 
     /**
