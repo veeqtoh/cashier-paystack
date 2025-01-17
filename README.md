@@ -1,10 +1,10 @@
 
 # Laravel Cashier - Paystack Edition
-[![Build Status](https://travis-ci.org/veeqtoh/cashier-paystack.svg)](https://travis-ci.org/veeqtoh/cashier-paystack)
-[![Latest Stable Version](https://poser.pugx.org/veeqtoh/cashier-paystack/v/stable)](https://packagist.org/packages/veeqtoh/cashier-paystack)
-[![Total Downloads](https://poser.pugx.org/veeqtoh/cashier-paystack/downloads)](https://packagist.org/packages/veeqtoh/cashier-paystack)
-[![Latest Unstable Version](https://poser.pugx.org/veeqtoh/cashier-paystack/v/unstable)](https://packagist.org/packages/veeqtoh/cashier-paystack)
-[![License](https://poser.pugx.org/veeqtoh/cashier-paystack/license)](https://packagist.org/packages/veeqtoh/cashier-paystack)
+[![Latest Stable Version](http://poser.pugx.org/veeqtoh/cashier-paystack/v)](https://packagist.org/packages/veeqtoh/cashier-paystack)
+[![Total Downloads](http://poser.pugx.org/veeqtoh/cashier-paystack/downloads)](https://packagist.org/packages/veeqtoh/cashier-paystack)
+[![Latest Unstable Version](http://poser.pugx.org/veeqtoh/cashier-paystack/v/unstable)](https://packagist.org/packages/veeqtoh/cashier-paystack)
+[![License](http://poser.pugx.org/veeqtoh/cashier-paystack/license)](https://packagist.org/packages/veeqtoh/cashier-paystack)
+[![PHP Version Require](http://poser.pugx.org/veeqtoh/cashier-paystack/require/php)](https://packagist.org/packages/veeqtoh/cashier-paystack)
 
 ## Table of Contents
 - [Overview](#overview)
