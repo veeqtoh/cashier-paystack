@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Veeqtoh\Cashier\Providers;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Veeqtoh\Cashier\Cashier;
 
 /**
  * class CashierServiceProvider
@@ -15,36 +17,87 @@ use Illuminate\Support\ServiceProvider;
 class CashierServiceProvider extends ServiceProvider
 {
     /**
-     * Register the application services.
-     */
-    public function register(): void
-    {
-        // Merge the package's configuration with the Laravel application's configuration.
-        $this->mergeConfigFrom(__DIR__ . '/../../config/paystack.php', 'paystack');
-    }
-
-    /**
      * Bootstrap the application services.
      *
      * @return void
      */
     public function boot(): void
     {
-        // Publish the package's configuration file to the Laravel application.
-        $this->publishes([
-            __DIR__ . '/../../config/paystack.php' => config_path('paystack.php'),
-        ], 'config');
+        $this->registerRoutes();
+        $this->registerResources();
+        $this->registerPublishing();
+    }
 
-        $publishesMigrationsMethod = method_exists($this, 'publishesMigrations')
-        ? 'publishesMigrations'
-        : 'publishes';
+    /**
+     * Register the application services.
+     */
+    public function register(): void
+    {
+        $this->configure();
+    }
 
-        $this->{$publishesMigrationsMethod}([
-            __DIR__.'/../../database/migrations' => $this->app->databasePath('migrations'),
-        ], 'cashier-paystack-migrations');
+    /**
+     * Setup the configuration for Paystack Cashier.
+     *
+     * @return void
+     */
+    protected function configure(): void
+    {
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/paystack.php', 'paystack'
+        );
+    }
+    /**
+     * Register the package routes.
+     *
+     * @return void
+     */
+    protected function registerRoutes(): void
+    {
+        if (Cashier::$registersRoutes) {
+            Route::group([
+                'prefix'    => config('paystack.path'),
+                'namespace' => 'Veeqtoh\Cashier\Http\Controllers',
+                'as'        => 'paystack.',
+            ], function () {
+                $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+            });
+        }
+    }
 
-        $this->publishes([
-            __DIR__.'/../../resources/views' => $this->app->resourcePath('views/vendor/paystack-cashier'),
-        ], 'paystack-cashier-views');
+    /**
+     * Register the package resources.
+     *
+     * @return void
+     */
+    protected function registerResources(): void
+    {
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'cashier-paystack');
+    }
+
+    /**
+     * Register the package's publishable resources.
+     *
+     * @return void
+     */
+    protected function registerPublishing(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../../config/paystack.php' => $this->app->configPath('paystack.php'),
+            ], 'cashier-paystack-config');
+
+            $publishesMigrationsMethod = method_exists($this, 'publishesMigrations')
+                ? 'publishesMigrations'
+                : 'publishes';
+
+            $this->{$publishesMigrationsMethod}([
+                __DIR__.'/../../database/migrations' => $this->app->databasePath('migrations'),
+            ], 'cashier-paystack-migrations');
+
+            $this->publishes([
+                __DIR__.'/../../resources/views' => $this->app->resourcePath('views/vendor/cashier-paystack'),
+            ], 'cashier-paystack-views');
+        }
     }
 }

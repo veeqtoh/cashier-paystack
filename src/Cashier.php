@@ -11,11 +11,11 @@ use Veeqtoh\Cashier\Models\SubscriptionItem;
 class Cashier
 {
     /**
-     * The Cashier library version.
+     * Indicates if Cashier routes will be registered.
      *
-     * @var string
+     * @var bool
      */
-    const VERSION = '1.0.0';
+    public static $registersRoutes = true;
 
     /**
      * The custom currency formatter.

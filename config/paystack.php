@@ -37,4 +37,17 @@ return [
     |
     */
     'model' => env('PAYSTACK_MODEL', 'App\Models\User'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cashier Path
+    |--------------------------------------------------------------------------
+    |
+    | This is the base URI path where Cashier's views, such as the payment
+    | verification screen, will be available from. You're free to tweak
+    | this path according to your preferences and application design.
+    |
+    */
+
+    'path' => env('CASHIER_PATH', 'paystack'),
 ];
