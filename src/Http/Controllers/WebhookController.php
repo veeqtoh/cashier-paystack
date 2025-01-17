@@ -101,6 +101,37 @@ class WebhookController extends Controller
     }
 
     /**
+     * Handle customer successfully charged.
+     */
+    public function handleChargeSuccess(array $payload) : Response
+    {
+        if (!isset($payload['data'])) {
+            Log::error('Invalid charge success payload: Missing data key', ['payload' => $payload]);
+            return new Response('Invalid charge data', 400);
+        }
+
+        $data = $payload['data'];
+        $user = $this->getUserByEmail($data['customer']['email'] ?? null);
+
+        if (!$user) {
+            Log::error('User not found for charge success', ['customer_code' => $data['customer']['customer_code'] ?? null]);
+            return new Response('User not found', 400);
+        }
+
+        $user->update([
+            'paystack_customer_id'   => $data['customer']['id'],
+            'paystack_customer_code' => $data['customer']['customer_code'],
+            'card_type'              => $data['authorization']['card_type'],
+            'card_last_four'         => $data['authorization']['last4'],
+        ]);
+
+        $user->save();
+
+        Log::info('Customer data updated');
+        return new Response('Charge success handled', 200);
+    }
+
+    /**
      * Handle a subscription disabled notification from paystack.
      */
     protected function handleSubscriptionDisable(array $payload): Response
@@ -154,7 +185,21 @@ class WebhookController extends Controller
 
         $model = Cashier::paystackModel();
 
-        return (new $model)->where('paystack_code', $paystackCode)->first();
+        return (new $model)->where('paystack_customer_code', $paystackCode)->first();
+    }
+
+    /**
+     * Get the billable entity instance by email address.
+     */
+    protected function getUserByEmail(?string $email): mixed
+    {
+        if (!$email) {
+            return null;
+        }
+
+        $model = Cashier::paystackModel();
+
+        return (new $model)->where('email', $email)->first();
     }
 
     /**

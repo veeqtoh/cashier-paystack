@@ -14,9 +14,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('paystack_id')->nullable()->index();
-            $table->string('paystack_code')->nullable();
-            $table->string('card_brand')->nullable();
+            $table->string('paystack_customer_id')->nullable()->index();
+            $table->string('paystack_customer_code')->nullable();
+            $table->string('card_type')->nullable();
             $table->string('card_last_four', 4)->nullable();
             $table->timestamp('trial_ends_at')->nullable();
         });
@@ -29,13 +29,13 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropIndex([
-                'paystack_id',
+                'paystack_customer_id',
             ]);
 
             $table->dropColumn([
-                'paystack_id',
-                'paystack_code',
-                'card_brand',
+                'paystack_customer_id',
+                'paystack_customer_code',
+                'card_type',
                 'card_last_four',
                 'trial_ends_at',
             ]);

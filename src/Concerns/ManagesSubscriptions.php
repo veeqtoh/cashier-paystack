@@ -126,8 +126,8 @@ trait ManagesSubscriptions
             throw new FailedToCreatePaystackCustomer($response);
         }
 
-        $this->paystack_id   = $response['data']['id'];
-        $this->paystack_code = $response['data']['customer_code'];
+        $this->paystack_customer_id   = $response['data']['id'];
+        $this->paystack_customer_code = $response['data']['customer_code'];
 
         $this->save();
 
@@ -139,7 +139,7 @@ trait ManagesSubscriptions
      */
     public function asPaystackCustomer(): mixed
     {
-        $customer = Paystack::fetchCustomer($this->paystack_code)['data'];
+        $customer = Paystack::fetchCustomer($this->paystack_customer_code)['data'];
 
         return $customer;
     }
