@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Veeqtoh\Cashier\Cashier;
+use Veeqtoh\Cashier\Events\WebhookHandled;
+use Veeqtoh\Cashier\Events\WebhookReceived;
 use Veeqtoh\Cashier\Http\Middleware\VerifyWebhookSignature;
 use Veeqtoh\Cashier\Models\Subscription;
 
@@ -41,10 +43,17 @@ class WebhookController extends Controller
         // Convert the event to a method name using studly_case (CamelCase).
         $method = 'handle' . Str::studly(str_replace('.', '_', $payload['event']));
 
+        WebhookReceived::dispatch($payload);
+
         // Check if the method exists in this class.
         if (method_exists($this, $method)) {
             Log::info("Handling event: {$payload['event']}");
-            return $this->{$method}($payload);
+
+            $response = $this->{$method}($payload);
+
+            WebhookHandled::dispatch($payload);
+
+            return $response;
         }
 
         // Handle missing method or unknown event.
