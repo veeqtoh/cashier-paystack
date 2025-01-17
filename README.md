@@ -29,7 +29,7 @@
         - [Subscription Trials](#subscription-trials)
         - [Without Billing Up Front](#without-billing-up-front)
     - [Customers](#customers)
-        - [Customers](#creating-customers)
+        - [Creating Customers](#creating-customers)
     - [Payment Methods](#payment-methods)
         - [Retrieving Authenticated Payment Methods](#retrieving-authenticated-payment-methods)
         - [Deleting Payment Methods](#deleting-payment-methods)
@@ -292,7 +292,7 @@ $user->newSubscription($plan_code, 'main')->create();
 
 ### Customers
 #### Creating Customers
-Occasionally, you may wish to create a Paystack customer without beginning a subscription. You may accomplish this using the `createAsPaystackCustomer` method:
+Occasionally, you may wish to create a Paystack customer without beginning a subscription. I would recommend you even do this at sign up. You may accomplish this using the `createAsPaystackCustomer` method:
 ```php
 $user->createAsPaystackCustomer();
 ```
