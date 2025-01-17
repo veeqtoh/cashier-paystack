@@ -111,19 +111,19 @@ Cashier::useCurrency('ghs', 'GH₵');
 To create a subscription, first retrieve an instance of your billable model, which typically will be an instance of `App\User`. Once you have retrieved the model instance, you may use the  `newSubscription` method to create the model's subscription:
 ```php
 $user = User::find(1);
-$plan_name = // Paystack plan name e.g default, main, yakata
 $plan_code = // Paystack plan code  e.g PLN_gx2wn530m0i3w3m
+$plan_name = // Paystack plan name e.g default, main, yakata
 $auth_token = // Paystack card auth token for customer
 
-//Example usages. 
+//Example usages.
 // 1. Accepts an card authorization authtoken for the customer.
 $response = $user->newSubscription($plan_code, $plan_name)->create($auth_token);
 
 // 2. The customer's most recent authorization would be used to charge subscription.
-$response = $user->newSubscription($plan_code, $plan_name)->create(); 
+$response = $user->newSubscription($plan_code, $plan_name)->create();
 
 // 3. Initialize a new charge for a subscription.
-$response = $user->newSubscription($plan_code, $plan_name)->charge(); 
+$response = $user->newSubscription($plan_code, $plan_name)->charge();
 return redirect($response['data']['authorization_url']);
 ```
 
@@ -137,11 +137,11 @@ The `charge` method, initializes a transaction which returns a response containi
 If you would like to specify additional customer details, you may do so by passing them as the second argument to the `create` method:
 ```php
 $user->newSubscription('PLN_cgumntiwkkda3cw', 'main')
-    ->create($auth_token, [
-        'data' => 'More Customer Data',
-    ],[
-        'data' => 'More Subscription Data',
-    ]);
+    ->create(
+        $auth_token,
+        ['data' => 'More Customer Data'],
+        ['data' => 'More Subscription Data']
+    );
 ```
 
 To learn more about the additional fields supported by Paystack, check out paystack's documentation on customer creation or the corresponding Paystack documentation.
@@ -177,8 +177,9 @@ if ($user->subscription('main')->onTrial()) {
 
 The `subscribedToPaystack` method may be used to determine if the user is subscribed to a given Paystack based on a given Paystack Paystack code. In this example, we will determine if the user's main subscription is actively subscribed to the monthly Paystack:
 ```php
-$plan_name = // Paystack plan name e.g default, main, yakata
 $plan_code = // Paystack Paystack Code  e.g PLN_gx2wn530m0i3w3m
+$plan_name = // Paystack plan name e.g default, main, yakata
+
 if ($user->subscribedToPlan($plan_code, $plan_name)) {
     //
 }
@@ -234,8 +235,8 @@ If you would like to offer trial periods to your customers while still collectin
 $user = User::find(1);
 
 $user->newSubscription('PLN_gx2wn530m0i3w3m', 'main')
-            ->trialDays(10)
-            ->create($auth_token);
+    ->trialDays(10)
+    ->create($auth_token);
 ```
 
 This method will set the trial period ending date on the subscription record within the database, as well as instruct Paystack to not begin billing the customer until after this date.
@@ -277,10 +278,13 @@ if ($user->onGenericTrial()) {
 ```
 Once you are ready to create an actual subscription for the user, you may use the newSubscription method as usual:
 ```php
-$user = User::find(1);
-$plan_code = // Paystack Paystack Code  e.g PLN_gx2wn530m0i3w3m
-// With Paystack card auth token for customer
+$user      = User::find(1);
+$plan_code = // Paystack Paystack Code  e.g PLN_gx2wn530m0i3w3m.
+
+// With Paystack card auth token for customer.
 $user->newSubscription($plan_code, 'main')->create($auth_token);
+
+// Or
 $user->newSubscription($plan_code, 'main')->create();
 ```
 
@@ -292,7 +296,7 @@ $user->createAsPaystackCustomer();
 ```
 Once the customer has been created in Paystack, you may begin a subscription at a later date.
 
-### Payment Methods 
+### Payment Methods
 #### Retrieving Authenticated Payment Methods
 The cards method on the billable model instance returns a collection of `Veeqtoh\Cashier\Card` instances:
 ```php
@@ -315,7 +319,7 @@ Paystack can notify your application of a variety of events via webhooks. By def
 
 By default, this controller will automatically handle cancelling subscriptions that have too many failed charges (as defined by your paystack settings), charge success, transfer success or fail, invoice updates and subscription changes; however, as we'll soon discover, you can extend this controller to handle any webhook event you like.
 
-To ensure your application can handle Paystack webhooks, be sure to configure the webhook URL in your Paystack dashboard settings. By default, Cashier's webhook controller responds to the /paystack/webhook URL path. The full list of all webhooks supported by Paystack are listed [here|https://paystack.com/docs/payments/webhooks/]
+To ensure your application can handle Paystack webhooks, be sure to configure the webhook URL in your Paystack dashboard settings. By default, Cashier's webhook controller responds to the /paystack/webhook URL path. The full list of all webhooks supported by Paystack are listed [here](https://paystack.com/docs/payments/webhooks/)
 
 _Make sure you protect incoming requests with Cashier's included webhook signature verification middleware._
 
@@ -333,15 +337,15 @@ Since Paystack webhooks need to bypass Laravel's [CSRF protection](https://larav
 Cashier automatically handles subscription cancellations for failed charges and other common Paystack webhook events. However, if you have additional webhook events you would like to handle, you may do so by listening to the following events that are dispatched by Cashier:
 - `Veeqtoh\Cashier\Events\WebhookReceived`
 - `Veeqtoh\Cashier\Events\WebhookHandled`
- 
+
 Both events contain the full payload of the Paystack webhook. For example, if you wish to handle the `invoice.payment_failed` webhook, you may register a [listener](https://laravel.com/docs/11.x/events#defining-listeners) that will handle the event:
 ```php
 <?php
- 
+
 namespace App\Listeners;
- 
+
 use Veeqtoh\Cashier\Events\WebhookReceived;
- 
+
 class PaystackEventListener
 {
     /**
@@ -380,7 +384,7 @@ class WebhookController extends CashierController
 }
 ```
 
-Next, define a route to your Cashier controller within your routes/web.php file or update the route that came out-of-the-box:
+Next, define a route to your Cashier controller within your routes/web.php file to overwrite the default webhook route that came out-of-the-box with this package:
 ```php
 
 use App\Http\Controllers\WebhookController
@@ -424,7 +428,7 @@ The invoice will be charged immediately against the user's credit card. The invo
 ```php
 $user->invoiceFor('Stickers', 50000, [
     'line_items' => [ ],
-    'tax' => [{"name":"VAT", "amount":2000}]
+    'tax'        => [{"name":"VAT", "amount":2000}]
 ]);
 ```
 
