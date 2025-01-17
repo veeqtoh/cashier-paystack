@@ -1,2 +1,6 @@
 /old/
-/vendor/
+.idea/
+vendor/
+composer.lock
+composer.phar
+/.phpunit.cache
