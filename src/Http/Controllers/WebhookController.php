@@ -6,7 +6,7 @@ namespace Veeqtoh\Cashier\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Veeqtoh\Cashier\Cashier;
@@ -20,6 +20,7 @@ class WebhookController extends Controller
      */
     public function __construct()
     {
+        Log::info('WebhookController initialized');
         if (config('paystack.secretKey')) {
             $this->middleware(VerifyWebhookSignature::class);
         }
@@ -33,19 +34,22 @@ class WebhookController extends Controller
         $payload = json_decode($request->getContent(), true);
 
         if (!isset($payload['event'])) {
-            return response()->json(['error' => 'Invalid payload'], 400);
+            Log::error('Invalid payload: Missing event key', ['payload' => $payload]);
+            return new Response('Invalid payload', 400);
         }
 
-        // Convert the event to a method name using studly_case (CamelCase)
+        // Convert the event to a method name using studly_case (CamelCase).
         $method = 'handle' . Str::studly(str_replace('.', '_', $payload['event']));
 
         // Check if the method exists in this class.
         if (method_exists($this, $method)) {
+            Log::info("Handling event: {$payload['event']}");
             return $this->{$method}($payload);
         }
 
         // Handle missing method or unknown event.
-        return $this->missingMethod();
+        Log::warning("Unhandled event: {$payload['event']}");
+        return $this->missingMethod($payload);
     }
 
     /**
@@ -53,19 +57,38 @@ class WebhookController extends Controller
      */
     protected function handleSubscriptionCreate(array $payload): Response
     {
-        $data         = $payload['data'];
-        $user         = $this->getUserByPaystackCode($data['customer']['customer_code']);
-        $subscription = $this->getSubscriptionByCode($data['subscription_code']);
-
-        if ($user && !isset($subscription)) {
-            $plan         = $data['plan'];
-            $subscription = $user->newSubscription($plan['name'], $plan['plan_code']);
-            $data['id']   =  null;
-
-            $subscription->add($data);
+        if (!isset($payload['data'])) {
+            Log::error('Invalid subscription create payload: Missing data key', ['payload' => $payload]);
+            return new Response('Invalid subscription data', 400);
         }
 
-        return new Response('Webhook Handled', 200);
+        $data         = $payload['data'];
+        $user         = $this->getUserByPaystackCode($data['customer']['customer_code'] ?? null);
+        $subscription = $this->getSubscriptionByCode($data['subscription_code'] ?? null);
+
+        if (!$user) {
+            Log::error('User not found for subscription create', ['customer_code' => $data['customer']['customer_code'] ?? null]);
+            return new Response('User not found', 400);
+        }
+
+        if (!$subscription) {
+            $plan = $data['plan'] ?? null;
+            if ($plan) {
+                $subscription = $user->newSubscription($plan['name'], $plan['plan_code']);
+                $data['id']   = null;
+
+                $subscription->add($data);
+
+                Log::info('Subscription created successfully', ['subscription_code' => $data['subscription_code']]);
+                return new Response('Subscription created', 200);
+            }
+
+            Log::error('Plan data missing in subscription payload', ['payload' => $payload]);
+            return response()->json(['error' => 'Invalid plan data'], 400);
+        }
+
+        Log::info('Subscription already exists', ['subscription_code' => $data['subscription_code']]);
+        return new Response('Subscription already exists', 200);
     }
 
     /**
@@ -73,36 +96,53 @@ class WebhookController extends Controller
      */
     protected function handleSubscriptionDisable(array $payload): Response
     {
-        return $this->cancelSubscription($payload['data']['subscription_code']);
+        return $this->cancelSubscription($payload['data']['subscription_code'] ?? null);
     }
 
     /**
      * Handle a subscription cancellation notification from paystack.
      */
-    protected function cancelSubscription(string $subscriptionCode): Response
+    protected function cancelSubscription(?string $subscriptionCode): Response
     {
+        if (!$subscriptionCode) {
+            Log::error('Missing subscription code in cancellation payload');
+            return new Response('Invalid subscription code', 400);
+        }
+
         $subscription = $this->getSubscriptionByCode($subscriptionCode);
 
         if ($subscription && (! $subscription->cancelled() || $subscription->onGracePeriod())) {
             $subscription->markAsCancelled();
+
+            Log::info('Subscription cancelled', ['subscription_code' => $subscriptionCode]);
+            return new Response('Subscription cancelled', 200);
         }
 
-        return new Response('Webhook Handled', 200);
+        Log::warning('Subscription not found or already cancelled', ['subscription_code' => $subscriptionCode]);
+        return new Response('Subscription not found or already cancelled', 404);
     }
 
     /**
      * Get the model for the given subscription Code.
      */
-    protected function getSubscriptionByCode(string $subscriptionCode): ?Subscription
+    protected function getSubscriptionByCode(?string $subscriptionCode): ?Subscription
     {
+        if (!$subscriptionCode) {
+            return null;
+        }
+
         return Subscription::where('paystack_code', $subscriptionCode)->first();
     }
 
     /**
      * Get the billable entity instance by Paystack Code.
      */
-    protected function getUserByPaystackCode(string $paystackCode): mixed
+    protected function getUserByPaystackCode(?string $paystackCode): mixed
     {
+        if (!$paystackCode) {
+            return null;
+        }
+
         $model = Cashier::paystackModel();
 
         return (new $model)->where('paystack_code', $paystackCode)->first();
@@ -111,8 +151,9 @@ class WebhookController extends Controller
     /**
      * Handle calls to missing methods on the controller.
      */
-    public function missingMethod(): Response
+    public function missingMethod(array $payload): Response
     {
-        return new Response;
+        Log::warning('Unhandled webhook event', ['payload' => $payload]);
+        return new Response('Unhandled webhook event', 200);
     }
 }
