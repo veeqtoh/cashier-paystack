@@ -36,12 +36,12 @@ class SubscriptionBuilder
      * Create a new subscription builder instance.
      *
      * @param mixed  $owner The model that is subscribing.
-     * @param string $name  The name of the subscription.
      * @param string $plan  The name of the plan being subscribed to.
+     * @param string $name  The name of the subscription.
      *
      * @return void
      */
-    public function __construct(protected mixed $owner, protected string $name, protected string $plan)
+    public function __construct(protected mixed $owner, protected string $plan, protected string $name)
     {
         //
     }
