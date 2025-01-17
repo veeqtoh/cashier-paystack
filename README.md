@@ -1,10 +1,12 @@
 
 # Laravel Cashier - Paystack Edition
-[![Build Status](https://travis-ci.org/veeqtoh/cashier-paystack.svg)](https://travis-ci.org/veeqtoh/cashier-paystack)
-[![Latest Stable Version](https://poser.pugx.org/veeqtoh/cashier-paystack/v/stable)](https://packagist.org/packages/veeqtoh/cashier-paystack)
-[![Total Downloads](https://poser.pugx.org/veeqtoh/cashier-paystack/downloads)](https://packagist.org/packages/veeqtoh/cashier-paystack)
-[![Latest Unstable Version](https://poser.pugx.org/veeqtoh/cashier-paystack/v/unstable)](https://packagist.org/packages/veeqtoh/cashier-paystack)
-[![License](https://poser.pugx.org/veeqtoh/cashier-paystack/license)](https://packagist.org/packages/veeqtoh/cashier-paystack)
+
+<p align="center">
+<a href="https://packagist.org/packages/veeqtoh/cashier-paystack"><img src="https://img.shields.io/packagist/v/veeqtoh/cashier-paystack?style=flat-square" alt="Latest Version on Packagist"></a>
+<a href="https://packagist.org/packages/veeqtoh/cashier-paystack"><img src="https://img.shields.io/packagist/dt/veeqtoh/cashier-paystack?style=flat-square" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/veeqtoh/cashier-paystack"><img src="https://img.shields.io/packagist/php-v/veeqtoh/cashier-paystack?style=flat-square" alt="PHP from Packagist"></a>
+<a href="https://github.com/veeqtoh/cashier-paystack/blob/master/LICENSE"><img src="https://img.shields.io/github/license/veeqtoh/cashier-paystack?style=flat-square" alt="GitHub license"></a>
+</p>
 
 ## Table of Contents
 - [Overview](#overview)
