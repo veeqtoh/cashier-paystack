@@ -50,7 +50,7 @@
 - [License](#license)
 
 ## Overview
-This library is complete re-write of the abandoned [webong-cashier library](https://github.com/webong/cashier-paystack) which provides an expressive, fluent interface to Paystack's subscription billing services for Laravel > 10.x apps.
+This library is a modern & complete re-write of the abandoned [webong's cashier-paystack library](https://github.com/webong/cashier-paystack) which provides an expressive, fluent interface to Paystack's subscription billing services for Laravel > 10.x apps.
 
 ## Installation
 ### Requirements
