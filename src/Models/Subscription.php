@@ -106,7 +106,7 @@ class Subscription extends Model
      */
     public function onTrial(): bool
     {
-        return $this->trial_ends_at && $this->trial_ends_at->isFuture();
+        return Carbon::create($this->trial_ends_at) && Carbon::create($this->trial_ends_at)->isFuture();
     }
 
     /**
@@ -114,7 +114,7 @@ class Subscription extends Model
      */
     public function onGracePeriod(): bool
     {
-        return $this->ends_at && $this->ends_at->isFuture();
+        return Carbon::create($this->ends_at) && Carbon::create($this->ends_at)->isFuture();
     }
 
     /**
