@@ -78,7 +78,7 @@ php artisan migrate
 ```
 
 ### Configuration
-Upon [publishing the configuration and migration files](#install-the-package), a configuration-file named `paystack-cashier`.php with some sensible defaults will be placed in your config directory. Update them or set their corresponding values in your `.env` file as follows.
+Upon [publishing the configuration and migration files](#install-the-package), a configuration-file named `paystack`.php with some sensible defaults will be placed in your config directory. Update them or set their corresponding values in your `.env` file as follows.
 ```php
 PAYSTACK_MODEL=App\Models\User
 PAYSTACK_PUBLIC_KEY=pk_test_your_public_key
