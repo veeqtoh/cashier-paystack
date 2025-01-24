@@ -2,12 +2,9 @@ includes:
     - ./vendor/larastan/larastan/extension.neon
 
 parameters:
-
     paths:
         - src
-
     level: 4
-
     ignoreErrors:
-
     checkMissingIterableValueType: false
+    treatPhpDocTypesAsCertain: false
