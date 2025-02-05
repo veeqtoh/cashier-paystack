@@ -216,7 +216,7 @@ class Subscription extends Model
     public function asPaystackSubscription(): mixed
     {
         try {
-            $subscriptions = PaystackService::customerSubscriptions($this->user->paystack_id);
+            $subscriptions = PaystackService::customerSubscriptions($this->user->paystack_customer_id);
 
             if (empty($subscriptions)) {
                 throw new SubscriptionNotFound('The Paystack customer does not have any subscriptions.');

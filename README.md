@@ -355,7 +355,7 @@ class PaystackEventListener
      */
     public function handle(WebhookReceived $event): void
     {
-        if ($event->payload['type'] === 'invoice.payment_failed') {
+        if ($event->payload['event'] === 'invoice.payment_failed') {
             // Handle the incoming event...
         }
     }
