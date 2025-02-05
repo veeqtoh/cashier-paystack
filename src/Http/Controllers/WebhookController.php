@@ -85,7 +85,6 @@ class WebhookController extends Controller
             $plan = $data['plan'] ?? null;
             if ($plan) {
                 $subscription = $user->newSubscription($plan['plan_code'], $plan['name']);
-                $data['id']   = null;
 
                 $subscription->add($data);
 
