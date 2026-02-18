@@ -5,8 +5,6 @@ namespace Veeqtoh\Cashier\Tests\Unit;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Unicodeveloper\Paystack\Facades\Paystack;
-use Unicodeveloper\Paystack\PaystackServiceProvider;
 use Veeqtoh\Cashier\Facades\Cashier;
 use Veeqtoh\Cashier\Providers\CashierServiceProvider;
 
@@ -26,7 +24,6 @@ abstract class TestCase extends OrchestraTestCase
     {
         return [
             CashierServiceProvider::class,
-            PaystackServiceProvider::class,
         ];
     }
 
@@ -41,7 +38,6 @@ abstract class TestCase extends OrchestraTestCase
     {
         return [
             'Cashier'  => Cashier::class,
-            'Paystack' => Paystack::class,
         ];
     }
 

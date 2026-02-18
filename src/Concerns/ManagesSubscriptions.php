@@ -6,9 +6,9 @@ namespace Veeqtoh\Cashier\Concerns;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Unicodeveloper\Paystack\Facades\Paystack;
 use Veeqtoh\Cashier\Classes\SubscriptionBuilder;
 use Veeqtoh\Cashier\Exceptions\FailedToCreatePaystackCustomer;
+use Veeqtoh\Cashier\Exceptions\FailedToFetchPaystackCustomer;
 use Veeqtoh\Cashier\Models\Subscription;
 use Veeqtoh\Cashier\Services\PaystackService;
 
@@ -119,7 +119,17 @@ trait ManagesSubscriptions
      */
     public function createAsPaystackCustomer(array $options = []): mixed
     {
-        $options  = array_key_exists('email', $options) ? $options : array_merge($options, ['email' => $this->email]);
+        $userData = [
+            'email'      => $this->resolveEmail(),
+            'first_name' => $this->resolveFirstName(),
+            'last_name'  => $this->resolveLastName(),
+            'phone'      => $this->resolvePhone(),
+        ];
+
+        $options = array_key_exists('email', $options)
+            ? $options
+            : array_merge($userData, $options);
+
         $response = PaystackService::createCustomer($options);
 
         if (! $response['status']) {
@@ -139,8 +149,94 @@ trait ManagesSubscriptions
      */
     public function asPaystackCustomer(): mixed
     {
-        $customer = Paystack::fetchCustomer($this->paystack_customer_code)['data'];
+        $response = PaystackService::fetchCustomer($this->paystack_customer_code);
 
-        return $customer;
+        if (! $response['status']) {
+            throw new FailedToFetchPaystackCustomer($response);
+        }
+
+        return $response['data'];
     }
+
+    /**
+     * Resolve the email address to use for Paystack customer creation.
+     */
+    protected function resolveEmail(): string
+    {
+        return $this->getAttribute('email')
+            ?? $this->profile?->getAttribute('email')
+            ?? '';
+    }
+
+    /**
+     * Resolve the first name to use for Paystack customer creation.
+     */
+    protected function resolveFirstName(): string
+    {
+        if (method_exists($this, 'paystackCustomerFirstName')) {
+            return $this->paystackCustomerFirstName();
+        }
+
+        if ($first = $this->getAttribute('first_name')) {
+            return $first;
+        }
+
+        if ($profile = $this->profile ?? null) {
+
+            if ($first = $profile->getAttribute('first_name')) {
+                return $first;
+            }
+
+            if ($full = $profile->getAttribute('full_name')) {
+                return explode(' ', trim($full))[0] ?? '';
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Resolve the last name to use for Paystack customer creation.
+     */
+    protected function resolveLastName(): string
+    {
+        if (method_exists($this, 'paystackCustomerLastName')) {
+            return $this->paystackCustomerLastName();
+        }
+
+        if ($last = $this->getAttribute('last_name')) {
+            return $last;
+        }
+
+        if ($profile = $this->profile ?? null) {
+
+            if ($last = $profile->getAttribute('last_name')) {
+                return $last;
+            }
+
+            if ($full = $profile->getAttribute('full_name')) {
+                $parts = explode(' ', trim($full));
+                return count($parts) > 1 ? end($parts) : '';
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Resolve the phone number to use for Paystack customer creation.
+     */
+    protected function resolvePhone(): string
+    {
+        if (method_exists($this, 'paystackCustomerPhone')) {
+            return $this->paystackCustomerPhone();
+        }
+
+        return $this->getAttribute('phone')
+            ?? $this->profile?->getAttribute('phone')
+            ?? $this->profile?->getAttribute('phone_1')
+            ?? '';
+    }
+
+
 }

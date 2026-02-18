@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Veeqtoh\Cashier\Concerns;
 
-use Unicodeveloper\Paystack\Facades\Paystack;
 use Veeqtoh\Cashier\Exceptions\IncompletePayment;
 use Veeqtoh\Cashier\Services\PaystackService;
 
@@ -19,7 +18,7 @@ trait PerformsCharges
     {
         $options = array_merge([
             'currency'  => $this->preferredCurrency(),
-            'reference' => Paystack::genTranxRef(),
+            'reference' => self::getHashedToken(),
         ], $options);
 
         $options['email']  = $this->email;
@@ -49,5 +48,20 @@ trait PerformsCharges
         $response = PaystackService::refund($options);
 
         return $response;
+    }
+
+    /**
+     * Generate a hashed token for use as a unique identifier for a charge or subscription.
+     */
+    public static function getHashedToken(int $length = 25): string
+    {
+        $token = "";
+        $max   = strlen(static::getPool());
+
+        for ($i = 0; $i < $length; $i++) {
+            $token .= static::getPool()[static::secureCrypt(0, $max)];
+        }
+
+        return $token;
     }
 }

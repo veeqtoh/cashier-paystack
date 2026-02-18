@@ -44,7 +44,6 @@
         "illuminate/contracts": "^10.0|^11.0|^12.0",
         "illuminate/container": "^10.0|^11.0|^12.0",
         "moneyphp/money": "^4.0",
-        "unicodeveloper/laravel-paystack": "dev-test",
         "symfony/http-kernel": "^6.0|^7.0",
         "symfony/polyfill-intl-icu": "^1.22.1"
     },

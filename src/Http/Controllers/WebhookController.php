@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Veeqtoh\Cashier\Http\Controllers;
 
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
@@ -65,7 +66,7 @@ class WebhookController extends Controller
     /**
      * Handle customer subscription create.
      */
-    protected function handleSubscriptionCreate(array $payload): Response
+    protected function handleSubscriptionCreate(array $payload): Response|JsonResponse
     {
         if (!isset($payload['data'])) {
             Log::error('Invalid subscription create payload: Missing data key', ['payload' => $payload]);
