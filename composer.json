@@ -14,12 +14,6 @@
             "email": "victorjohnukam@gmail.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/veeqtoh/laravel-paystack.git"
-        }
-    ],
     "keywords": [
         "veeqtoh",
         "victor-ukam",
