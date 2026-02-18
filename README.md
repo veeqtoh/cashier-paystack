@@ -305,7 +305,7 @@ The columns can be overridden to pass your custom columns for each of those fiel
 // If the first name column is called `f_name` on your model.
 public function paystackCustomerFirstName(): string
 {
-    return explode(' ', $this->f_name) ?? '';
+    return $this->f_name ?? '';
 }
 
 // If you have a full name column on your model instead.
@@ -325,13 +325,14 @@ Other columns can also be overwritten by defining and implementing any of the fo
 
 ```php
 // Last name.
-paystackCustomerLastName()
+paystackCustomerLastName();
 
 // Phone.
-paystackCustomerPhone()
+paystackCustomerPhone();
 
 //Email.
-paystackCustomerEmail()
+paystackCustomerEmail();
+```
 
 Once the customer has been created in Paystack, you may begin a subscription at a later date.
 
