@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Veeqtoh\Cashier\Classes;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Veeqtoh\Cashier\Exceptions\FailedToCreateSubscription;
 use Veeqtoh\Cashier\Models\Subscription;
 use Veeqtoh\Cashier\Services\PaystackService;
@@ -36,12 +37,12 @@ class SubscriptionBuilder
      * Create a new subscription builder instance.
      *
      * @param mixed  $owner The model that is subscribing.
-     * @param string $plan  The name of the plan being subscribed to.
+     * @param Model  $plan  The model instance of the plan being subscribed to.
      * @param string $name  The name of the subscription.
      *
      * @return void
      */
-    public function __construct(protected mixed $owner, protected string $plan, protected string $name)
+    public function __construct(protected mixed $owner, protected Model $plan, protected string $name)
     {
         //
     }
@@ -81,7 +82,7 @@ class SubscriptionBuilder
             'name'          => $this->name,
             'paystack_id'   => $options['id'],
             'paystack_code' => $options['subscription_code'],
-            'paystack_plan' => $this->plan,
+            'paystack_plan' => $this->plan->plan_code,
             'quantity'      => 1,
             'trial_ends_at' => $trialEndsAt,
             'ends_at'       => null,
@@ -94,10 +95,10 @@ class SubscriptionBuilder
     public function charge(array $options = []): mixed
     {
         $options = array_merge([
-            'plan' => $this->plan
+            'plan' => $this->plan->plan_code
         ], $options);
 
-        return $this->owner->charge(100, $options);
+        return $this->owner->charge($this->plan->price, $options);
     }
 
     /**
@@ -136,7 +137,7 @@ class SubscriptionBuilder
 
         return [
             'customer'   => $customer['customer_code'], // Customer email or code
-            'plan'       => $this->plan,
+            'plan'       => $this->plan->plan_code,
             'start_date' => $startDate->format('c'),
         ];
     }
