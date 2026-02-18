@@ -297,7 +297,7 @@ Occasionally, you may wish to create a Paystack customer without beginning a sub
 $user->createAsPaystackCustomer();
 ```
 
-By default, the package passes value set on the `email`, `first_name`, `last_name` and `phone` columns if they are set on the model class that uses the `Billable` trait (most likely user).
+By default, the package passes values set on the `email`, `first_name`, `last_name` and `phone` columns if they are set on the model class that uses the `Billable` trait (most likely user).
 
 The columns can be overridden to pass your custom columns for each of those fields by simply defining a method on the model as follows;
 
