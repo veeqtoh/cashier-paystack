@@ -51,9 +51,57 @@ trait PerformsCharges
     }
 
     /**
+     * Get the pool to use based on the type of prefix hash.
+     */
+    private static function getPool(string $type = 'alnum'): string
+    {
+        switch ($type) {
+            case 'alnum':
+                $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                break;
+            case 'alpha':
+                $pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                break;
+            case 'hexdec':
+                $pool = '0123456789abcdef';
+                break;
+            case 'numeric':
+                $pool = '0123456789';
+                break;
+            case 'nozero':
+                $pool = '123456789';
+                break;
+            case 'distinct':
+                $pool = '2345679ACDEFHJKLMNPRSTUVWXYZ';
+                break;
+            default:
+                $pool = (string) $type;
+                break;
+        }
+
+        return $pool;
+    }
+
+    /**
+     * Generate a random secure crypt figure.
+     */
+    private static function secureCrypt(int $min, int $max): int
+    {
+        $range = $max - $min;
+
+        if ($range <= 0) {
+            return $min; // not so random...
+        }
+
+        // Use PHP's cryptographically secure random_int to generate an integer
+        // in the half-open interval [min, max), matching the previous behavior.
+        return random_int($min, $max - 1);
+    }
+
+    /**
      * Generate a hashed token for use as a unique identifier for a charge or subscription.
      */
-    public static function getHashedToken(int $length = 25): string
+    protected static function getHashedToken(int $length = 25): string
     {
         $token = "";
         $max   = strlen(static::getPool());
