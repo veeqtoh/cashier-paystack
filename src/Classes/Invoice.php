@@ -173,7 +173,7 @@ class Invoice
      */
     public function update(array $data): mixed
     {
-        $data['customer'] = $this->owner->paystack_id;
+        $data['customer'] = $this->owner->getAttribute('paystack_id');
 
         return PaystackService::updateInvoice($this->invoice['id'], $data);
 

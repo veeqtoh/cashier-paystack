@@ -7,6 +7,9 @@ namespace Veeqtoh\Cashier\Concerns;
 use Illuminate\Support\Collection;
 use Veeqtoh\Cashier\Classes\Card;
 
+/**
+ * @phpstan-require-extends \Illuminate\Database\Eloquent\Model
+ */
 trait ManagesCards
 {
     /**
