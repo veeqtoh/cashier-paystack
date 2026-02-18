@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Veeqtoh\Cashier\Concerns;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use Veeqtoh\Cashier\Classes\SubscriptionBuilder;
@@ -18,7 +17,7 @@ trait ManagesSubscriptions
     /**
      * Begin creating a new subscription.
      */
-    public function newSubscription(Model $plan, string $subscription = 'default'): SubscriptionBuilder
+    public function newSubscription(string $plan, string $subscription = 'default'): SubscriptionBuilder
     {
         return new SubscriptionBuilder($this, $plan, $subscription);
     }
