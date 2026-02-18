@@ -125,7 +125,8 @@ $response = $user->newSubscription($plan_code, $plan_name)->create($auth_token);
 $response = $user->newSubscription($plan_code, $plan_name)->create();
 
 // 3. Initialize a new charge for a subscription.
-$response = $user->newSubscription($plan_code, $plan_name)->charge();
+// Paystack accepts charges in Kobo (e.g., 10000 = ₦100.00)
+$response = $user->newSubscription($plan_code, $plan_name)->charge(10000);
 return redirect($response['data']['authorization_url']);
 ```
 
@@ -133,7 +134,7 @@ The first argument passed to the `newSubscription` method is the specific Paysta
 
 The `create` method, which accepts a Paystack authorization token, will begin the subscription as well as update your database with the customer/user ID and other relevant billing information.
 
-The `charge` method, initializes a transaction which returns a response containing an authorization url for payment and an access code. 
+The `charge` method accepts an amount (in the lowest denominator of the currency, e.g., Kobo for Naira) and initializes a transaction which returns a response containing an authorization url for payment and an access code. 
 
 #### Additional User Details
 If you would like to specify additional customer details, you may do so by passing them as the second argument to the `create` method:
