@@ -8,7 +8,7 @@ use Exception;
 
 class FailedToFetchPaystackCustomer extends Exception
 {
-    public function __construct($response)
+    public function __construct(array $response)
     {
         $message = "Unable to fetch Paystack customer: {$response['message']}";
         parent::__construct($message);
