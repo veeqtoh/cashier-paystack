@@ -328,10 +328,10 @@ Other columns can also be overwritten by defining and implementing any of the fo
 paystackCustomerLastName()
 
 // Phone.
-paystackCustomerPhone():
+paystackCustomerPhone()
 
 //Email.
-paystackCustomerEmail():
+paystackCustomerEmail()
 
 Once the customer has been created in Paystack, you may begin a subscription at a later date.
 
