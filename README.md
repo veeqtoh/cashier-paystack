@@ -296,6 +296,43 @@ Occasionally, you may wish to create a Paystack customer without beginning a sub
 ```php
 $user->createAsPaystackCustomer();
 ```
+
+By default, the package passes value set on the `email`, `first_name`, `last_name` and `phone` columns if they are set on the model class that uses the `Billable` trait (most likely user).
+
+The columns can be overridden to pass your custom columns for each of those fields by simply defining a method on the model as follows;
+
+```php
+// If the first name column is called `f_name` on your model.
+public function paystackCustomerFirstName(): string
+{
+    return explode(' ', $this->f_name) ?? '';
+}
+
+// If you have a full name column on your model instead.
+public function paystackCustomerFirstName(): string
+{
+    return explode(' ', $this->full_name)[0] ?? '';
+}
+
+// If you have a full name column on your model relation such as `profile` instead.
+public function paystackCustomerFirstName(): string
+{
+    return explode(' ', $this->profile->full_name)[0] ?? '';
+}
+```
+
+Other columns can also be overwritten by defining and implementing any of the following methods;
+
+```php
+// Last name.
+paystackCustomerLastName()
+
+// Phone.
+paystackCustomerPhone():
+
+//Email.
+paystackCustomerEmail():
+
 Once the customer has been created in Paystack, you may begin a subscription at a later date.
 
 ### Payment Methods
