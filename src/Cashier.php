@@ -72,7 +72,7 @@ class Cashier
     /**
      * Set the currency to be used when billing models.
      */
-    public static function useCurrency(string $currency, string $symbol = null): void
+    public static function useCurrency(string $currency, ?string $symbol = null): void
     {
         $currency         = strtolower($currency);
         static::$currency = $currency;

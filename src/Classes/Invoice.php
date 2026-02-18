@@ -32,7 +32,7 @@ class Invoice
     /**
      * Get a Carbon date for the invoice.
      */
-    public function date(DateTimeZone|string $timezone = null): Carbon
+    public function date(DateTimeZone|string|null $timezone = null): Carbon
     {
         $carbon = Carbon::instance($this->invoice['created_at']);
 
