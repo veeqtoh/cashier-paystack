@@ -196,7 +196,7 @@ class PaystackService {
      */
     public static function fetchCustomer(string $customer_id, array $options = []): mixed
     {
-        return (new self)->setHttpResponse("/customer/{$customer_id}", 'GET', $options)->getData();
+        return (new self)->setHttpResponse("/customer/{$customer_id}", 'GET', $options)->getResponse();
     }
 
     /**
