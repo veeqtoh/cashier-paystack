@@ -332,6 +332,7 @@ paystackCustomerPhone()
 
 //Email.
 paystackCustomerEmail()
+```
 
 Once the customer has been created in Paystack, you may begin a subscription at a later date.
 
