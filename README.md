@@ -125,7 +125,8 @@ $response = $user->newSubscription($plan_code, $plan_name)->create($auth_token);
 $response = $user->newSubscription($plan_code, $plan_name)->create();
 
 // 3. Initialize a new charge for a subscription.
-$response = $user->newSubscription($plan_code, $plan_name)->charge();
+// Paystack accepts charges in Kobo (e.g., 10000 = ₦100.00)
+$response = $user->newSubscription($plan_code, $plan_name)->charge(10000);
 return redirect($response['data']['authorization_url']);
 ```
 
@@ -133,7 +134,7 @@ The first argument passed to the `newSubscription` method is the specific Paysta
 
 The `create` method, which accepts a Paystack authorization token, will begin the subscription as well as update your database with the customer/user ID and other relevant billing information.
 
-The `charge` method, initializes a transaction which returns a response containing an authorization url for payment and an access code. 
+The `charge` method accepts an amount (in the lowest denominator of the currency, e.g., Kobo for Naira) and initializes a transaction which returns a response containing an authorization url for payment and an access code. 
 
 #### Additional User Details
 If you would like to specify additional customer details, you may do so by passing them as the second argument to the `create` method:
@@ -296,6 +297,44 @@ Occasionally, you may wish to create a Paystack customer without beginning a sub
 ```php
 $user->createAsPaystackCustomer();
 ```
+
+By default, the package passes values set on the `email`, `first_name`, `last_name` and `phone` columns if they are set on the model class that uses the `Billable` trait (most likely user).
+
+The columns can be overridden to pass your custom columns for each of those fields by simply defining a method on the model as follows;
+
+```php
+// If the first name column is called `f_name` on your model.
+public function paystackCustomerFirstName(): string
+{
+    return $this->f_name ?? '';
+}
+
+// If you have a full name column on your model instead.
+public function paystackCustomerFirstName(): string
+{
+    return explode(' ', $this->full_name)[0] ?? '';
+}
+
+// If you have a full name column on your model relation such as `profile` instead.
+public function paystackCustomerFirstName(): string
+{
+    return explode(' ', $this->profile->full_name)[0] ?? '';
+}
+```
+
+Other columns can also be overwritten by defining and implementing any of the following methods;
+
+```php
+// Last name.
+paystackCustomerLastName();
+
+// Phone.
+paystackCustomerPhone();
+
+//Email.
+paystackCustomerEmail();
+```
+
 Once the customer has been created in Paystack, you may begin a subscription at a later date.
 
 ### Payment Methods

@@ -192,6 +192,14 @@ class PaystackService {
     }
 
     /**
+     * Hit the "customer" get endpoint.
+     */
+    public static function fetchCustomer(string $customer_id, array $options = []): mixed
+    {
+        return (new self)->setHttpResponse("/customer/{$customer_id}", 'GET', $options)->getResponse();
+    }
+
+    /**
      * Hit the "subscription" get endpoint.
      */
     public static function customerSubscriptions(string $customer_id): mixed

@@ -10,6 +10,9 @@ use Veeqtoh\Cashier\Concerns\ManagesInvoices;
 use Veeqtoh\Cashier\Concerns\ManagesSubscriptions;
 use Veeqtoh\Cashier\Concerns\PerformsCharges;
 
+/**
+ * @phpstan-require-extends \Illuminate\Database\Eloquent\Model
+ */
 trait Billable
 {
     use PerformsCharges;

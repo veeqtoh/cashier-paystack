@@ -6,5 +6,5 @@ parameters:
         - src
     level: 4
     ignoreErrors:
-    checkMissingIterableValueType: false
+        - identifier: trait.unused
     treatPhpDocTypesAsCertain: false
