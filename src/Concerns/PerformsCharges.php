@@ -107,10 +107,10 @@ trait PerformsCharges
     protected static function getHashedToken(int $length = 25): string
     {
         $token = "";
-        $max   = strlen(static::getPool());
+        $poolLength = strlen(static::getPool());
 
         for ($i = 0; $i < $length; $i++) {
-            $token .= static::getPool()[static::secureCrypt(0, $max)];
+            $token .= static::getPool()[static::secureCrypt(0, $poolLength)];
         }
 
         return $token;
