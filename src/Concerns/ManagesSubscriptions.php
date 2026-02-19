@@ -166,6 +166,10 @@ trait ManagesSubscriptions
      */
     protected function resolveEmail(): string
     {
+        if (method_exists($this, 'paystackCustomerEmail')) {
+            return $this->paystackCustomerEmail();
+        }
+
         return $this->getAttribute('email')
             ?? $this->profile?->getAttribute('email')
             ?? '';
