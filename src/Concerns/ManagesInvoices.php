@@ -15,6 +15,9 @@ use Veeqtoh\Cashier\Exceptions\InvoiceNotFound;
 use Veeqtoh\Cashier\Exceptions\NotPaystackCustomer;
 use Veeqtoh\Cashier\Services\PaystackService;
 
+/**
+ * @phpstan-require-extends \Illuminate\Database\Eloquent\Model
+ */
 trait ManagesInvoices
 {
     /**

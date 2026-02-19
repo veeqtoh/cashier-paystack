@@ -7,6 +7,9 @@ namespace Veeqtoh\Cashier\Concerns;
 use Veeqtoh\Cashier\Exceptions\IncompletePayment;
 use Veeqtoh\Cashier\Services\PaystackService;
 
+/**
+ * @phpstan-require-extends \Illuminate\Database\Eloquent\Model
+ */
 trait PerformsCharges
 {
     /**
