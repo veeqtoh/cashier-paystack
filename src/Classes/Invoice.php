@@ -32,7 +32,7 @@ class Invoice
     /**
      * Get a Carbon date for the invoice.
      */
-    public function date(DateTimeZone|string $timezone = null): Carbon
+    public function date(DateTimeZone|string|null $timezone = null): Carbon
     {
         $carbon = Carbon::instance($this->invoice['created_at']);
 
@@ -173,7 +173,7 @@ class Invoice
      */
     public function update(array $data): mixed
     {
-        $data['customer'] = $this->owner->paystack_id;
+        $data['customer'] = $this->owner->getAttribute('paystack_id');
 
         return PaystackService::updateInvoice($this->invoice['id'], $data);
 

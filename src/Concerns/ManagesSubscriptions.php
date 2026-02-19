@@ -12,6 +12,9 @@ use Veeqtoh\Cashier\Exceptions\FailedToFetchPaystackCustomer;
 use Veeqtoh\Cashier\Models\Subscription;
 use Veeqtoh\Cashier\Services\PaystackService;
 
+/**
+ * @phpstan-require-extends \Illuminate\Database\Eloquent\Model
+ */
 trait ManagesSubscriptions
 {
     /**

@@ -34,12 +34,12 @@ class Card
     {
         try {
             $data = [
-                'email'              => $this->owner->email,
+                'email'              => $this->owner->getAttribute('email'),
                 'amount'             => $amount,
                 'authorization_code' => $this->card->authorization_code,
             ];
 
-            if ($this->isReusable) {
+            if ($this->card->reusable) {
                 return PaystackService::checkAuthorization($data);
             }
 

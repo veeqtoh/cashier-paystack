@@ -14,14 +14,25 @@ use Veeqtoh\Cashier\Exceptions\SubscriptionNotFound;
 use Veeqtoh\Cashier\Services\PaystackService;
 
 /**
- * @property \Veeqtoh\Cashier\Billable|\Illuminate\Database\Eloquent\Model $owner
+ * @property int $id
+ * @property string|null $name
+ * @property string|null $paystack_id
+ * @property string|null $paystack_code
+ * @property string|null $paystack_plan
+ * @property int $quantity
+ * @property \Carbon\Carbon|null $trial_ends_at
+ * @property \Carbon\Carbon|null $ends_at
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model $user
+ * @property-read \Illuminate\Database\Eloquent\Model $owner
  */
 class Subscription extends Model
 {
     /**
      * The attributes that are not mass assignable.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $guarded = [];
 
@@ -216,7 +227,9 @@ class Subscription extends Model
     public function asPaystackSubscription(): mixed
     {
         try {
-            $subscriptions = PaystackService::customerSubscriptions($this->user->paystack_customer_id);
+            /** @var \Illuminate\Database\Eloquent\Model $owner */
+            $owner = $this->owner;
+            $subscriptions = PaystackService::customerSubscriptions($owner->getAttribute('paystack_customer_id'));
 
             if (empty($subscriptions)) {
                 throw new SubscriptionNotFound('The Paystack customer does not have any subscriptions.');
